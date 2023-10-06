@@ -3,19 +3,27 @@ import { useState } from "react";
 import messages from "../DATA/messages.json";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useUserContext } from "../core/CurrentUserProvider";
+
 export const FormArea = () => {
-  const [messageValue, setMessageValue] = useState([]);
   const { user } = useUserContext();
+
+  const [messageValue, setMessageValue] = useState("");
+  const [allMessage, setallMessage] = useState([]);
 
   const handleAddMessage = async () => {
     try {
-      const jsonValue = JSON.stringify({
-        message: messageValue,
-        id: 2,
-        sender: user,
-      });
-      await AsyncStorage.setItem("message", jsonValue);
-      await getData({ messageValue });
+      const allMessage = await AsyncStorage.getItem("message");
+      const messageParsed = JSON.parse(allMessage);
+      const jsonValue = JSON.stringify([
+        {
+          message: messageValue,
+          id: 2,
+          sender: user,
+        },
+      ]);
+      const updatedMessages = [...messageParsed, jsonValue];
+      await AsyncStorage.setItem("message", updatedMessages);
+      console.log(messageParsed);
     } catch (e) {
       console.error(e);
     }
@@ -25,10 +33,11 @@ export const FormArea = () => {
     try {
       const value = await AsyncStorage.getItem("message");
       if (value !== null) {
-        setMessageValue(JSON.parse(value));
+        // setMessageValue([...messageValue, JSON.parse(value)]);
+        console.log(value);
       }
     } catch (e) {
-      // error reading value
+      console.error(e);
     }
   };
 
