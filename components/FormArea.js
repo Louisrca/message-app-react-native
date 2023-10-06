@@ -2,33 +2,37 @@ import { View, TextInput, Button, StyleSheet } from "react-native";
 import { useState } from "react";
 import messages from "../DATA/messages.json";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import { useUserContext } from "../core/CurrentUserProvider";
 export const FormArea = () => {
-  const [messageValue, setMessageValue] = useState("");
+  const [messageValue, setMessageValue] = useState([]);
+  const { user } = useUserContext();
 
-
-
-  
   const handleAddMessage = async () => {
     try {
-      const jsonValue = JSON.stringify(messageValue);
+      const jsonValue = JSON.stringify({
+        message: messageValue,
+        id: 2,
+        sender: user,
+      });
       await AsyncStorage.setItem("message", jsonValue);
-      await getData();
+      await getData({ messageValue });
     } catch (e) {
       console.error(e);
     }
   };
 
-  const getData = async () => {
+  const getData = async (message) => {
     try {
       const value = await AsyncStorage.getItem("message");
       if (value !== null) {
-        console.log(value);
+        setMessageValue(JSON.parse(value));
       }
     } catch (e) {
       // error reading value
     }
   };
+
+  console.log(messageValue);
 
   return (
     <View style={styles.container}>

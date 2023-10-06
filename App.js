@@ -16,10 +16,11 @@ import { useState, useEffect } from "react";
 import { FormArea } from "./components/FormArea";
 import MessageArea from "./components/MessageArea";
 import CurrentUserProvider from "./core/CurrentUserProvider";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function App() {
   const [messageData, setMessageData] = useState({});
+
   useEffect(() => {
     setMessageData(messages);
   }, []);
